@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم خريجات ٢٠٢٦</title>
+    <style>
+        body { font-family: 'Tajawal', sans-serif; padding: 40px; background: #FBF6EF; }
+        .stat-card { padding: 30px; border-radius: 20px; margin-bottom: 30px; text-align: center; font-size: 2rem; box-shadow: var(--shadow); }
+        .red { background: #F3DCDA; color: #A85D68; }
+        .orange { background: #E4D3AC; color: #C6A15B; }
+        .yellow { background: #F8E9E7; color: #8a7069; }
+        table { width: 100%; background: white; border-collapse: collapse; border-radius: 15px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: center; }
+        button { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; background: #A85D68; color: white; }
+    </style>
+</head>
+<body>
+    <div class="stat-card {{ color }}">الحضور الحالي: {{ count }} ضيف</div>
+
+    <h2>جدول الحضور</h2>
+    <table>
+        <tr><th>الاسم</th><th>الجوال</th><th>الحالة</th></tr>
+        {% for a in attendees %}
+        <tr><td>{{ a.name }}</td><td>{{ a.phone }}</td><td>{{ "حاضر" if a.attending else "معتذر" }}</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>إدارة معرض الصور</h2>
+    <table>
+        <tr><th>الصورة</th><th>الحالة</th><th>إجراء</th></tr>
+        {% for p in photos %}
+        <tr>
+            <td><img src="/static/uploads/{{ p.filename }}" width="50"></td>
+            <td>{{ "مقبولة" if p.is_approved else "بانتظار المراجعة" }}</td>
+            <td>
+                {% if not p.is_approved %}
+                <button onclick="approve('photo', {{ p.id }})">موافقة</button>
+                {% endif %}
+                <button onclick="deleteItem('photo', {{ p.id }})" style="background:#cc0000;">حذف</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+<h2>إدارة ركن التهاني</h2>
+    <table>
+        <tr><th>الاسم</th><th>الرسالة</th><th>إجراء</th></tr>
+        {% for w in wishes %}
+        <tr>
+            <td>{{ w.name }}</td>
+            <td>{{ w.message }}</td>
+            <td>
+                <button onclick="deleteItem('wish', {{ w.id }})" style="background:#cc0000;">حذف</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <script>
+        async function approve(type, id) {
+            await fetch(`/api/approve-photo/${id}`, { method: 'POST' });
+            location.reload();
+        }
+        async function deleteItem(type, id) {
+            if(confirm('هل أنتِ متأكدة؟')) {
+                await fetch(`/api/delete/${type}/${id}`, { method: 'DELETE' });
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
