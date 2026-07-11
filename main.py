@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File, Depends
+from fastapi import FastAPI, Request, Form, UploadFile, File, Depends,APIRouter, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -9,6 +9,8 @@ import shutil
 import models
 from database import SessionLocal, engine
 
+import uuid
+from supabase import create_client, Client
 # إنشاء الجداول في قاعدة البيانات إذا لم تكن موجودة
 models.Base.metadata.create_all(bind=engine)
 
@@ -20,6 +22,9 @@ os.makedirs("static/uploads", exist_ok=True)
 # ربط الملفات الثابتة والواجهات
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase_client: Client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
 
 
 # دالة مساعدة لفتح وإغلاق الاتصال بقاعدة البيانات
@@ -72,25 +77,41 @@ async def submit_wish(
     db.commit()
     return {"status": "success"}
 
-
-# API: استقبال ورفع الصور من الضيوف
 @app.post("/api/upload")
 async def upload_photo(
         file: UploadFile = File(...),
         db: Session = Depends(get_db)
 ):
-    # حفظ الملف في مجلد uploads
-    file_location = f"static/uploads/{file.filename}"
-    with open(file_location, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    if not supabase_client:
+        return {"status": "error", "message": "لم يتم إعداد روابط Supabase في السيرفر"}
 
-    # حفظ اسم الصورة في قاعدة البيانات (مع جعل is_approved=False)
-    new_photo = models.Photo(filename=file.filename)
-    db.add(new_photo)
-    db.commit()
+    try:
+        # إنشاء اسم عشوائي فريد للصورة لمنع مسح الصور المتشابهة في الاسم
+        file_extension = file.filename.split(".")[-1]
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
 
-    return {"status": "success", "filename": file.filename}
+        # قراءة محتوى الصورة
+        file_content = await file.read()
 
+        # الرفع المباشر إلى Supabase (حاوية باسم photos)
+        supabase_client.storage.from_("photos").upload(
+            path=unique_filename,
+            file=file_content,
+            file_options={"content-type": file.content_type}
+        )
+
+        # جلب الرابط العام (Public URL) للصورة من السحابة
+        public_url = supabase_client.storage.from_("photos").get_public_url(unique_filename)
+
+        # حفظ الرابط في قاعدة البيانات (استخدمنا حقل filename لتجنب تعديل الجداول)
+        new_photo = models.Photo(filename=public_url)
+        db.add(new_photo)
+        db.commit()
+
+        return {"status": "success", "url": public_url}
+    except Exception as e:
+        print("Upload Error:", e)
+        return {"status": "error", "message": str(e)}
 
 @app.get("/admin")
 async def admin_panel(request: Request, db: Session = Depends(get_db)):
