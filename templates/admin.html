@@ -27,23 +27,23 @@
         {% endfor %}
     </table>
 
-    <h2>إدارة معرض الصور</h2>
-    <table>
-        <tr><th>الصورة</th><th>الحالة</th><th>إجراء</th></tr>
-        {% for p in photos %}
-        <tr>
-          <td><img src="{{ p.filename }}" width="50" style="object-fit: cover; height: 50px; border-radius: 4px;"></td>
-            <td>{{ "مقبولة" if p.is_approved else "بانتظار المراجعة" }}</td>
-            <td>
-                {% if not p.is_approved %}
-                <button onclick="approve('photo', {{ p.id }})">موافقة</button>
-                {% endif %}
-                <button onclick="deleteItem('photo', {{ p.id }})" style="background:#cc0000;">حذف</button>
-            </td>
-        </tr>
-        {% endfor %}
+<!--    <h2>إدارة معرض الصور</h2>-->
+<!--    <table>-->
+<!--        <tr><th>الصورة</th><th>الحالة</th><th>إجراء</th></tr>-->
+<!--        {% for p in photos %}-->
+<!--        <tr>-->
+<!--          <td><img src="{{ p.filename }}" width="50" style="object-fit: cover; height: 50px; border-radius: 4px;"></td>-->
+<!--            <td>{{ "مقبولة" if p.is_approved else "بانتظار المراجعة" }}</td>-->
+<!--            <td>-->
+<!--                {% if not p.is_approved %}-->
+<!--                <button onclick="approve('photo', {{ p.id }})">موافقة</button>-->
+<!--                {% endif %}-->
+<!--                <button onclick="deleteItem('photo', {{ p.id }})" style="background:#cc0000;">حذف</button>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        {% endfor %}-->
 
-    </table>
+<!--    </table>-->
 <h2>إدارة ركن التهاني</h2>
     <table>
         <tr><th>الاسم</th><th>الرسالة</th><th>إجراء</th></tr>

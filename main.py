@@ -110,51 +110,51 @@ async def submit_wish(
     return {"status": "success"}
 
 
-@app.post("/api/upload")
-async def upload_photo(
-        file: UploadFile = File(...),
-        db: Session = Depends(get_db)
-):
-    if not supabase_client:
-        print("Error: Supabase client not configured")
-        return {"status": "error", "message": "Supabase غير معد"}
-
-    try:
-        # 1. تجهيز اسم الملف
-        file_extension = file.filename.split(".")[-1]
-        unique_filename = f"{uuid.uuid4()}.{file_extension}"
-        file_content = await file.read()
-
-        # 2. الرفع إلى Supabase Storage
-        print("Starting upload to storage...")
-        upload_resp = supabase_client.storage.from_("photos").upload(
-            path=unique_filename,
-            file=file_content,
-            file_options={"content-type": file.content_type}
-        )
-
-        # 3. جلب الرابط
-        public_url = supabase_client.storage.from_("photos").get_public_url(unique_filename)
-        print(f"File uploaded to: {public_url}")
-
-        # 4. حفظ البيانات في القاعدة (مع إرسال كل الأعمدة المطلوبة)
-        print("Saving to database...")
-        new_photo = models.Photo(
-            filename=public_url,
-            is_approved=False,
-            created_at=datetime.datetime.utcnow()
-        )
-        db.add(new_photo)
-        db.commit()
-        db.refresh(new_photo)
-
-        print("Successfully saved to database!")
-        return {"status": "success", "url": public_url}
-
-    except Exception as e:
-        # هذه الطباعة ستظهر في Logs منصة Render
-        print(f"CRITICAL UPLOAD ERROR: {str(e)}")
-        return {"status": "error", "message": str(e)}
+# @app.post("/api/upload")
+# async def upload_photo(
+#         file: UploadFile = File(...),
+#         db: Session = Depends(get_db)
+# ):
+#     if not supabase_client:
+#         print("Error: Supabase client not configured")
+#         return {"status": "error", "message": "Supabase غير معد"}
+#
+#     try:
+#         # 1. تجهيز اسم الملف
+#         file_extension = file.filename.split(".")[-1]
+#         unique_filename = f"{uuid.uuid4()}.{file_extension}"
+#         file_content = await file.read()
+#
+#         # 2. الرفع إلى Supabase Storage
+#         print("Starting upload to storage...")
+#         upload_resp = supabase_client.storage.from_("photos").upload(
+#             path=unique_filename,
+#             file=file_content,
+#             file_options={"content-type": file.content_type}
+#         )
+#
+#         # 3. جلب الرابط
+#         public_url = supabase_client.storage.from_("photos").get_public_url(unique_filename)
+#         print(f"File uploaded to: {public_url}")
+#
+#         # 4. حفظ البيانات في القاعدة (مع إرسال كل الأعمدة المطلوبة)
+#         print("Saving to database...")
+#         new_photo = models.Photo(
+#             filename=public_url,
+#             is_approved=False,
+#             created_at=datetime.datetime.utcnow()
+#         )
+#         db.add(new_photo)
+#         db.commit()
+#         db.refresh(new_photo)
+#
+#         print("Successfully saved to database!")
+#         return {"status": "success", "url": public_url}
+#
+#     except Exception as e:
+#         # هذه الطباعة ستظهر في Logs منصة Render
+#         print(f"CRITICAL UPLOAD ERROR: {str(e)}")
+#         return {"status": "error", "message": str(e)}
 
 @app.get("/admin")
 async def admin_panel(request: Request, db: Session = Depends(get_db), admin: str = Depends(get_current_admin)):

@@ -525,55 +525,55 @@
   <svg viewBox="0 0 1200 70" preserveAspectRatio="none"><path d="M0,0 C150,60 300,10 450,45 C600,75 750,15 900,50 C1050,80 1150,20 1200,40 L1200,0 L0,0 Z" fill="var(--cream)"></path></svg>
 </div>
 
-<section id="gallery" style="background:var(--cream);">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">معرض الصور</span>
-      <h2>لحظات سنحتفظ بها</h2>
-    </div>
+<!--<section id="gallery" style="background:var(&#45;&#45;cream);">-->
+<!--  <div class="container">-->
+<!--    <div class="sec-head reveal">-->
+<!--      <span class="eyebrow">معرض الصور</span>-->
+<!--      <h2>لحظات سنحتفظ بها</h2>-->
+<!--    </div>-->
 
-    <!-- Upload Interface -->
-    <div class="upload-area reveal">
-        <h3 class="upload-title">شاركونا ذكرياتكم</h3>
-        <p class="upload-subtitle">التقطتم صوراً جميلة؟ شاركوها معنا لتضاف إلى الألبوم 📸</p>
+<!--    &lt;!&ndash; Upload Interface &ndash;&gt;-->
+<!--    <div class="upload-area reveal">-->
+<!--        <h3 class="upload-title">شاركونا ذكرياتكم</h3>-->
+<!--        <p class="upload-subtitle">التقطتم صوراً جميلة؟ شاركوها معنا لتضاف إلى الألبوم 📸</p>-->
 
-        <!-- نموذج الرفع -->
-        <form id="uploadForm" onsubmit="event.preventDefault(); submitPhoto();">
-            <!-- منطقة اختيار الصورة -->
-            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>اضغط هنا لاختيار صورة من جهازك</p>
-                <input type="file" id="fileInput" name="photo" accept="image/*" style="display: none;" onchange="showPreview(this)" required>
-            </div>
+<!--        &lt;!&ndash; نموذج الرفع &ndash;&gt;-->
+<!--        <form id="uploadForm" onsubmit="event.preventDefault(); submitPhoto();">-->
+<!--            &lt;!&ndash; منطقة اختيار الصورة &ndash;&gt;-->
+<!--            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">-->
+<!--                <i class="fas fa-cloud-upload-alt"></i>-->
+<!--                <p>اضغط هنا لاختيار صورة من جهازك</p>-->
+<!--                <input type="file" id="fileInput" name="photo" accept="image/*" style="display: none;" onchange="showPreview(this)" required>-->
+<!--            </div>-->
 
-            <!-- منطقة المعاينة (مخفية افتراضياً) -->
-            <div class="preview-container" id="previewContainer">
-                <button type="button" class="remove-btn" onclick="clearPreview()" title="إلغاء الصورة">
-                    <i class="fas fa-times"></i>
-                </button>
-                <img src="" alt="Preview" class="preview-image" id="imagePreview">
-            </div>
+<!--            &lt;!&ndash; منطقة المعاينة (مخفية افتراضياً) &ndash;&gt;-->
+<!--            <div class="preview-container" id="previewContainer">-->
+<!--                <button type="button" class="remove-btn" onclick="clearPreview()" title="إلغاء الصورة">-->
+<!--                    <i class="fas fa-times"></i>-->
+<!--                </button>-->
+<!--                <img src="" alt="Preview" class="preview-image" id="imagePreview">-->
+<!--            </div>-->
 
-            <!-- زر الإرسال -->
-            <button type="submit" class="upload-btn" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> إرسال الصورة
-            </button>
-        </form>
-    </div>
+<!--            &lt;!&ndash; زر الإرسال &ndash;&gt;-->
+<!--            <button type="submit" class="upload-btn" id="submitBtn">-->
+<!--                <i class="fas fa-paper-plane"></i> إرسال الصورة-->
+<!--            </button>-->
+<!--        </form>-->
+<!--    </div>-->
 
-    <!-- Gallery Grid -->
-    <div class="gallery-grid" id="photoGrid">
-      {% for photo in photos %}
-        <!-- Assuming photo.url contains the full path from Supabase storage -->
-       <div class="g-item reveal tilt" style="background: url('{{ photo.filename }}'); background-size: cover !important; background-position: center !important;"></div>
-      {% endfor %}
+<!--    &lt;!&ndash; Gallery Grid &ndash;&gt;-->
+<!--    <div class="gallery-grid" id="photoGrid">-->
+<!--      {% for photo in photos %}-->
+<!--        &lt;!&ndash; Assuming photo.url contains the full path from Supabase storage &ndash;&gt;-->
+<!--       <div class="g-item reveal tilt" style="background: url('{{ photo.filename }}'); background-size: cover !important; background-position: center !important;"></div>-->
+<!--      {% endfor %}-->
 
-      {% if not photos %}
-        <div class="g-item reveal tilt"><span>لا توجد صور<br>بعد</span></div>
-      {% endif %}
-    </div>
-  </div>
-</section>
+<!--      {% if not photos %}-->
+<!--        <div class="g-item reveal tilt"><span>لا توجد صور<br>بعد</span></div>-->
+<!--      {% endif %}-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</section>-->
 <div class="curtain-divider">
   <svg viewBox="0 0 1200 70" preserveAspectRatio="none"><path d="M0,0 C150,60 300,10 450,45 C600,75 750,15 900,50 C1050,80 1150,20 1200,40 L1200,0 L0,0 Z" fill="var(--cream)"></path></svg>
 </div>

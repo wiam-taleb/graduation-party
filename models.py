@@ -17,9 +17,9 @@ class Wish(Base):
     message = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
-class Photo(Base):
-    __tablename__ = "gallery"
-    id = Column(Integer, primary_key=True, index=True)
-    filename = Column(String)
-    is_approved = Column(Boolean, default=False) # افتراضياً الصورة مخفية حتى توافقي عليها
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+# class Photo(Base):
+#     __tablename__ = "gallery"
+#     id = Column(Integer, primary_key=True, index=True)
+#     filename = Column(String)
+#     is_approved = Column(Boolean, default=False) # افتراضياً الصورة مخفية حتى توافقي عليها
+#     created_at = Column(DateTime, default=datetime.datetime.utcnow)
