@@ -177,19 +177,18 @@ async def admin_panel(request: Request, db: Session = Depends(get_db), admin: st
         context={
             "attendees": attendees,
             "wishes": wishes,
-            "photos": photos,
             "count": count,
             "color": color
         }
     )
 # API: الموافقة على صورة
-@app.post("/api/approve-photo/{photo_id}")
-async def approve_photo(photo_id: int, db: Session = Depends(get_db)):
-    photo = db.query(models.Photo).filter(models.Photo.id == photo_id).first()
-    if photo:
-        photo.is_approved = True
-        db.commit()
-    return {"status": "success"}
+# @app.post("/api/approve-photo/{photo_id}")
+# async def approve_photo(photo_id: int, db: Session = Depends(get_db)):
+#     photo = db.query(models.Photo).filter(models.Photo.id == photo_id).first()
+#     if photo:
+#         photo.is_approved = True
+#         db.commit()
+#     return {"status": "success"}
 
 
 @app.delete("/api/delete/{item_type}/{item_id}")
@@ -198,8 +197,8 @@ async def delete_item(item_type: str, item_id: int, db: Session = Depends(get_db
         item = None
         if item_type == "attendee":
             item = db.query(models.Attendee).filter(models.Attendee.id == item_id).first()
-        elif item_type == "photo":
-            item = db.query(models.Photo).filter(models.Photo.id == item_id).first()
+        # elif item_type == "photo":
+        #     item = db.query(models.Photo).filter(models.Photo.id == item_id).first()
         elif item_type == "wish":
             item = db.query(models.Wish).filter(models.Wish.id == item_id).first()
 
