@@ -10,7 +10,7 @@ import models
 from database import SessionLocal, engine
 import datetime
 import uuid
-
+from supabase import create_client, Client
 
 import secrets
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
