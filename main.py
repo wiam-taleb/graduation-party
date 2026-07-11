@@ -139,6 +139,7 @@ async def upload_photo(
         new_photo = models.Photo(filename=public_url)
         db.add(new_photo)
         db.commit()
+        db.refresh(new_photo)
 
         return {"status": "success", "url": public_url}
     except Exception as e:
@@ -180,25 +181,27 @@ async def approve_photo(photo_id: int, db: Session = Depends(get_db)):
         db.commit()
     return {"status": "success"}
 
+
 @app.delete("/api/delete/{item_type}/{item_id}")
 async def delete_item(item_type: str, item_id: int, db: Session = Depends(get_db)):
-    # ... الأكواد السابقة ...
+    try:
+        item = None
+        if item_type == "attendee":
+            item = db.query(models.Attendee).filter(models.Attendee.id == item_id).first()
+        elif item_type == "photo":
+            item = db.query(models.Photo).filter(models.Photo.id == item_id).first()
+        elif item_type == "wish":
+            item = db.query(models.Wish).filter(models.Wish.id == item_id).first()
 
-    if item_type == "attendee":
-        item = db.query(models.Attendee).filter(models.Attendee.id == item_id).first()
-    elif item_type == "photo":
-        item = db.query(models.Photo).filter(models.Photo.id == item_id).first()
-    elif item_type == "wish":
-        item = db.query(models.Wish).filter(models.Wish.id == item_id).first()
-    else:
-        raise HTTPException(status_code=400, detail="نوع غير صالح")
+        if not item:
+            raise HTTPException(status_code=404, detail="العنصر غير موجود")
 
-    if not item:
-        raise HTTPException(status_code=404, detail="العنصر غير موجود")
-
-    db.delete(item)
-    db.commit()
-    return {"status": "success"}
+        db.delete(item)
+        db.commit()
+        return {"status": "success"}
+    except Exception as e:
+        print(f"Error: {e}")  # هذا السطر سيطبع الخطأ الحقيقي في الـ Logs
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
