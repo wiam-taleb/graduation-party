@@ -8,7 +8,7 @@ import shutil
 
 import models
 from database import SessionLocal, engine
-
+import datetime
 import uuid
 from supabase import create_client, Client
 
@@ -109,41 +109,51 @@ async def submit_wish(
     db.commit()
     return {"status": "success"}
 
+
 @app.post("/api/upload")
 async def upload_photo(
         file: UploadFile = File(...),
         db: Session = Depends(get_db)
 ):
     if not supabase_client:
-        return {"status": "error", "message": "لم يتم إعداد روابط Supabase في السيرفر"}
+        print("Error: Supabase client not configured")
+        return {"status": "error", "message": "Supabase غير معد"}
 
     try:
-        # إنشاء اسم عشوائي فريد للصورة لمنع مسح الصور المتشابهة في الاسم
+        # 1. تجهيز اسم الملف
         file_extension = file.filename.split(".")[-1]
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
-
-        # قراءة محتوى الصورة
         file_content = await file.read()
 
-        # الرفع المباشر إلى Supabase (حاوية باسم photos)
-        supabase_client.storage.from_("photos").upload(
+        # 2. الرفع إلى Supabase Storage
+        print("Starting upload to storage...")
+        upload_resp = supabase_client.storage.from_("photos").upload(
             path=unique_filename,
             file=file_content,
             file_options={"content-type": file.content_type}
         )
 
-        # جلب الرابط العام (Public URL) للصورة من السحابة
+        # 3. جلب الرابط
         public_url = supabase_client.storage.from_("photos").get_public_url(unique_filename)
+        print(f"File uploaded to: {public_url}")
 
-        # حفظ الرابط في قاعدة البيانات (استخدمنا حقل filename لتجنب تعديل الجداول)
-        new_photo = models.Photo(filename=public_url)
+        # 4. حفظ البيانات في القاعدة (مع إرسال كل الأعمدة المطلوبة)
+        print("Saving to database...")
+        new_photo = models.Photo(
+            filename=public_url,
+            is_approved=False,
+            created_at=datetime.datetime.utcnow()
+        )
         db.add(new_photo)
         db.commit()
         db.refresh(new_photo)
 
+        print("Successfully saved to database!")
         return {"status": "success", "url": public_url}
+
     except Exception as e:
-        print("Upload Error:", e)
+        # هذه الطباعة ستظهر في Logs منصة Render
+        print(f"CRITICAL UPLOAD ERROR: {str(e)}")
         return {"status": "error", "message": str(e)}
 
 @app.get("/admin")
