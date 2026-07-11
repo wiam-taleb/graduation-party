@@ -66,11 +66,20 @@
             location.reload();
         }
         async function deleteItem(type, id) {
-            if(confirm('هل أنتِ متأكدة؟')) {
-                await fetch(`/api/delete/${type}/${id}`, { method: 'DELETE' });
-                location.reload();
+        if(confirm('هل أنتِ متأكدة من الحذف؟')) {
+            try {
+                const response = await fetch(`/api/delete/${type}/${id}`, { method: 'DELETE' });
+                if(response.ok) {
+                    location.reload();
+                } else {
+                    const errorData = await response.json();
+                    alert('حدث خطأ ولم يتم الحذف: ' + (errorData.detail || response.status));
+                }
+            } catch (error) {
+                alert('مشكلة في الاتصال بالسيرفر: ' + error.message);
             }
         }
+    }
     </script>
 </body>
 </html>
