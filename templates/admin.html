@@ -23,9 +23,6 @@
         <tr><th>الاسم</th><th>الجوال</th><th>الحالة</th></tr>
         {% for a in attendees %}
         <tr><td>{{ a.name }}</td><td>{{ a.phone }}</td><td>{{ "حاضر" if a.attending else "معتذر" }}</td></tr>
-        <td>
-                <button onclick="deleteItem('attendee', {{ a.id }})" style="background:#cc0000;">حذف</button>
-            </td>
         </tr>
         {% endfor %}
     </table>
