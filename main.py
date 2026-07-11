@@ -160,7 +160,7 @@ async def submit_wish(
 async def admin_panel(request: Request, db: Session = Depends(get_db), admin: str = Depends(get_current_admin)):
     attendees = db.query(models.RSVP).all()
     wishes = db.query(models.Wish).all()
-    photos = db.query(models.Photo).all()
+
 
     count = len([a for a in attendees if a.attending])
 
