@@ -58,10 +58,7 @@
         {% endfor %}
     </table>
     <script>
-        async function approve(type, id) {
-            await fetch(`/api/approve-photo/${id}`, { method: 'POST' });
-            location.reload();
-        }
+
         async function deleteItem(type, id) {
         if(confirm('هل أنتِ متأكدة من الحذف؟')) {
             try {
