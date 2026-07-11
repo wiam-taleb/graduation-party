@@ -11,6 +11,38 @@ from database import SessionLocal, engine
 
 import uuid
 from supabase import create_client, Client
+
+import secrets
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi import status
+
+security = HTTPBasic()
+security = HTTPBasic()
+
+
+def get_current_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    # جلب البيانات من السيرفر فقط، بدون أي قيم افتراضية مكشوفة في الكود
+    correct_username = os.getenv("ADMIN_USERNAME")
+    correct_password = os.getenv("ADMIN_PASSWORD")
+
+    # حماية إضافية: إذا لم يتم العثور على المتغيرات في Render، نوقف العملية ونمنع الدخول
+    if not correct_username or not correct_password:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="خطأ في إعدادات الأمان في الخادم. لم يتم العثور على بيانات الاعتماد."
+        )
+
+    # التحقق الآمن من مطابقة البيانات المدخلة مع بيانات السيرفر
+    is_correct_username = secrets.compare_digest(credentials.username, str(correct_username))
+    is_correct_password = secrets.compare_digest(credentials.password, str(correct_password))
+
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="اسم المستخدم أو كلمة المرور غير صحيحة",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 # إنشاء الجداول في قاعدة البيانات إذا لم تكن موجودة
 models.Base.metadata.create_all(bind=engine)
 
@@ -114,7 +146,7 @@ async def upload_photo(
         return {"status": "error", "message": str(e)}
 
 @app.get("/admin")
-async def admin_panel(request: Request, db: Session = Depends(get_db)):
+async def admin_panel(request: Request, db: Session = Depends(get_db), admin: str = Depends(get_current_admin)):
     attendees = db.query(models.RSVP).all()
     wishes = db.query(models.Wish).all()
     photos = db.query(models.Photo).all()

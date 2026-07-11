@@ -1178,7 +1178,7 @@
         </div>
         <div class="info-item">
             <i class="fas fa-map-marker-alt"></i>
-            <span><strong>المكان:</strong> جدة - قاعة ناي</span>
+            <span><strong>المكان:</strong> جدة - حي الحرازات</span>
         </div>
 
         <!-- العداد التنازلي -->
@@ -1437,12 +1437,17 @@
       document.getElementById("hours").innerHTML = hours < 10 ? "0" + hours : hours;
       document.getElementById("minutes").innerHTML = minutes < 10 ? "0" + minutes : minutes;
       document.getElementById("seconds").innerHTML = seconds < 10 ? "0" + seconds : seconds;
-
-      if (distance < 0) {
-          clearInterval(countdownInterval);
-          document.getElementById("countdown").innerHTML = "<h4 style='color:var(--rose-deep); margin-top:15px; font-family: \"Aref Ruqaa\", serif; font-size: 1.5rem;'>بدأ الحفل! أهلاً وسهلاً بكم 🎉</h4>";
-      }
-  }, 1000);
+if (distance >= 0) {
+    document.getElementById("cd-days").innerText = days;
+    document.getElementById("cd-hours").innerText = hours;
+    document.getElementById("cd-minutes").innerText = minutes;
+    document.getElementById("cd-seconds").innerText = seconds;
+  } else {
+    // إخفاء العداد وإظهار رسالة عند بدء الحفل
+    clearInterval(countdownFunction);
+    document.getElementById("countdown").innerHTML = "<div style='font-size: 1.8rem; color: var(--rose-deep); font-family: \"Aref Ruqaa\", serif; margin-top: 20px;'>بدأ الحفل! أهلاً بكم 🎉</div>";
+  }
+}, 1000);
 
  /* ---------- RSVP Logic & Digital Ticket ---------- */
 async function submitRSVP(attending) {
