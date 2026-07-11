@@ -180,16 +180,26 @@ async def approve_photo(photo_id: int, db: Session = Depends(get_db)):
         db.commit()
     return {"status": "success"}
 
-# API: حذف صورة أو تهنئة
-@app.delete("/api/delete/{type}/{id}")
-async def delete_item(type: str, id: int, db: Session = Depends(get_db)):
-    # التأكد من تحديد النموذج الصحيح
-    model = models.Photo if type == "photo" else models.Wish
-    item = db.query(model).filter(model.id == id).first()
-    if item:
-        db.delete(item)
-        db.commit()
-        return {"status": "deleted"}
-    return {"status": "error", "message": "Item not found"}
+@app.delete("/api/delete/{item_type}/{item_id}")
+async def delete_item(item_type: str, item_id: int, db: Session = Depends(get_db)):
+    # ... الأكواد السابقة ...
+
+    if item_type == "attendee":
+        item = db.query(models.Attendee).filter(models.Attendee.id == item_id).first()
+    elif item_type == "photo":
+        item = db.query(models.Photo).filter(models.Photo.id == item_id).first()
+    elif item_type == "wish":
+        item = db.query(models.Wish).filter(models.Wish.id == item_id).first()
+    else:
+        raise HTTPException(status_code=400, detail="نوع غير صالح")
+
+    if not item:
+        raise HTTPException(status_code=404, detail="العنصر غير موجود")
+
+    db.delete(item)
+    db.commit()
+    return {"status": "success"}
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
