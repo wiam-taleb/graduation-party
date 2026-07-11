@@ -646,39 +646,33 @@
 
   // Countdown Timer
   // Set the date we're counting down to
- /* ---------- العداد التنازلي (مُحدث) ---------- */
-const countdownElement = document.getElementById("countdown");
+  const countDownDate = new Date("Jul 25, 2026 20:00:00").getTime();
 
-if (countdownElement) { // لا تشغل الكود إلا إذا كان العداد موجوداً في الصفحة
-    const countDownDate = new Date("July 25, 2026 20:00:00").getTime();
+  const countdownInterval = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
 
-    const countdownFunction = setInterval(function() {
-        const now = new Date().getTime();
-        const distance = countDownDate - now;
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      document.getElementById("days").innerHTML = days < 10 ? "0" + days : days;
+      document.getElementById("hours").innerHTML = hours < 10 ? "0" + hours : hours;
+      document.getElementById("minutes").innerHTML = minutes < 10 ? "0" + minutes : minutes;
+      document.getElementById("seconds").innerHTML = seconds < 10 ? "0" + seconds : seconds;
+if (distance >= 0) {
+    document.getElementById("cd-days").innerText = days;
+    document.getElementById("cd-hours").innerText = hours;
+    document.getElementById("cd-minutes").innerText = minutes;
+    document.getElementById("cd-seconds").innerText = seconds;
+  } else {
+    // إخفاء العداد وإظهار رسالة عند بدء الحفل
+    clearInterval(countdownFunction);
+    document.getElementById("countdown").innerHTML = "<div style='font-size: 1.8rem; color: var(--rose-deep); font-family: \"Aref Ruqaa\", serif; margin-top: 20px;'>بدأ الحفل! أهلاً بكم 🎉</div>";
+  }
+}, 1000);
 
-        const d = document.getElementById("cd-days");
-        const h = document.getElementById("cd-hours");
-        const m = document.getElementById("cd-minutes");
-        const s = document.getElementById("cd-seconds");
-
-        if (d && h && m && s) { // التأكد من وجود العناصر قبل التحديث
-            if (distance >= 0) {
-                d.innerText = days;
-                h.innerText = hours;
-                m.innerText = minutes;
-                s.innerText = seconds;
-            } else {
-                clearInterval(countdownFunction);
-                countdownElement.innerHTML = "<div style='font-size: 1.8rem; color: var(--rose-deep);'>بدأ الحفل! 🎉</div>";
-            }
-        }
-    }, 1000);
-}
  /* ---------- RSVP Logic & Digital Ticket ---------- */
 async function submitRSVP(attending) {
   const nameInput = document.getElementById('rsvpName');
