@@ -10,7 +10,7 @@ import models
 from database import SessionLocal, engine
 import datetime
 import uuid
-from supabase import create_client, Client
+
 
 import secrets
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -72,14 +72,14 @@ def get_db():
 @app.get("/")
 async def home(request: Request, db: Session = Depends(get_db)):
     # جلب الصور التي تم الموافقة عليها فقط
-    approved_photos = db.query(models.Photo).filter(models.Photo.is_approved == True).all()
+
     all_wishes = db.query(models.Wish).all()  # جلب التهاني
 
     # تمريرها للـ context
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"photos": approved_photos, "wishes": all_wishes}
+        context={ "wishes": all_wishes}
     )
 @app.post("/api/rsvp")
 async def submit_rsvp(
