@@ -18,15 +18,43 @@
 <body>
     <div class="stat-card {{ color }}">الحضور الحالي: {{ count }} ضيف</div>
 
-    <h2>جدول الحضور</h2>
-    <table>
-        <tr><th>الاسم</th><th>الجوال</th><th>الحالة</th></tr>
-        {% for a in attendees %}
-        <tr><td>{{ a.name }}</td><td>{{ a.phone }}</td><td>{{ "حاضر" if a.attending else "معتذر" }}</td></tr>
-        </tr>
-        {% endfor %}
-    </table>
+  <!-- جدول الحضور -->
+<h3>قائمة الحضور</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>الاسم</th>
+      <th>الحالة</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for person in attendees %}
+    <tr>
+      <td>{{ person.name }}</td>
+      <td>حاضر</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
+<!-- جدول المعتذرين -->
+<h3>قائمة المعتذرين</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>الاسم</th>
+      <th>الحالة</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for person in apologizers %}
+    <tr>
+      <td>{{ person.name }}</td>
+      <td>معتذر</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 <!--    <h2>إدارة معرض الصور</h2>-->
 <!--    <table>-->
 <!--        <tr><th>الصورة</th><th>الحالة</th><th>إجراء</th></tr>-->

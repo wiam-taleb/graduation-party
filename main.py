@@ -158,24 +158,30 @@ async def submit_wish(
 
 @app.get("/admin")
 async def admin_panel(request: Request, db: Session = Depends(get_db), admin: str = Depends(get_current_admin)):
-    attendees = db.query(models.RSVP).all()
+    # جلب جميع الردود (RSVPs)
+    all_rsvps = db.query(models.RSVP).all()
     wishes = db.query(models.Wish).all()
 
+    # فصل الحضور عن المعتذرين
+    attendees = [a for a in all_rsvps if a.attending]
+    apologizers = [a for a in all_rsvps if not a.attending]
 
-    count = len([a for a in attendees if a.attending])
+    # حساب عدد الحضور الفعلي
+    count = len(attendees)
 
+    # تحديد اللون بناءً على العدد
     color = "yellow"
     if count >= 80:
         color = "red"
     elif count >= 40:
         color = "orange"
 
-    # التعديل الصحيح للنسخ الحديثة من FastAPI:
     return templates.TemplateResponse(
         request=request,
         name="admin.html",
         context={
             "attendees": attendees,
+            "apologizers": apologizers, # تمرير قائمة المعتذرين
             "wishes": wishes,
             "count": count,
             "color": color
