@@ -13,14 +13,36 @@
         table { width: 100%; background: white; border-collapse: collapse; border-radius: 15px; overflow: hidden; }
         th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: center; }
         button { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; background: #A85D68; color: white; }
+        /* الحاوية الأساسية */
+.admin-container {
+    display: flex;
+    flex-wrap: wrap; /* للسماح للعناصر بالنزول لسطر جديد عند صغر الشاشة */
+    gap: 20px; /* مسافة بين الجدولين */
+    justify-content: center;
+}
+
+/* كل جدول يأخذ نصف العرض في الشاشات الكبيرة */
+.table-box {
+    flex: 1; /* يأخذ مساحة متساوية */
+    min-width: 300px; /* أقل عرض للجدول قبل أن ينزل لسطر جديد */
+}
+
+/* تنسيق بسيط للجداول (اختياري للون البنفسجي) */
+.table-box h3 {
+    color: #6a1b9a; /* بنفسجي */
+    text-align: center;
+}
     </style>
 </head>
 <body>
     <div class="stat-card {{ color }}">الحضور الحالي: {{ count }} ضيف</div>
 
   <!-- جدول الحضور -->
-<h3>قائمة الحضور</h3>
-<table class="table table-striped">
+<div class="admin-container">
+    <!-- جدول الحضور -->
+    <div class="table-box">
+        <h3>قائمة الحضور</h3>
+        <table class="table">
   <thead>
     <tr>
       <th>الاسم</th>
@@ -31,15 +53,17 @@
     {% for person in attendees %}
     <tr>
       <td>{{ person.name }}</td>
+          <td>{{ person.phone }}</td>
       <td>حاضر</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-
+</div>
 <!-- جدول المعتذرين -->
-<h3>قائمة المعتذرين</h3>
-<table class="table table-striped">
+<div class="table-box">
+        <h3>قائمة المعتذرين</h3>
+        <table class="table">
   <thead>
     <tr>
       <th>الاسم</th>
@@ -50,11 +74,14 @@
     {% for person in apologizers %}
     <tr>
       <td>{{ person.name }}</td>
+        <td>{{ person.phone }}</td>
       <td>معتذر</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+    </div>
+</div>
 <!--    <h2>إدارة معرض الصور</h2>-->
 <!--    <table>-->
 <!--        <tr><th>الصورة</th><th>الحالة</th><th>إجراء</th></tr>-->
